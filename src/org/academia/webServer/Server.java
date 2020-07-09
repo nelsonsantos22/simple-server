@@ -53,7 +53,7 @@ public class Server {
     public void fileCheck (String path){
 
         try {
-
+            System.out.println(path);
             if(path.equals("www/index.html") || path.equals("www/")){
 
                 dest = Files.readAllBytes(new File("www/index.html").toPath());
@@ -64,6 +64,28 @@ public class Server {
                         "Content-Length: " + dest.length + "\r\n\r\n");
                 out.writeBytes(pathFile);
                 out.flush();
+                return;
+
+            } else if (path.equals("www/transferir.jpg")){
+
+                FileInputStream input = new FileInputStream("www/transferir.jpg");
+
+                byte[] buffer = new byte[2048];
+
+                String extension = path.substring(15);
+
+                File resource = new File(path);
+
+                out.writeBytes("HTTP/1.0 200 Document Follows\r\n" +
+                        "Content-Type: image/" + extension +"\r\n" +
+                        "Content-Length: " + resource.length() + "\r\n\r\n");
+
+                while ((input.read(buffer)) != -1) {
+
+                    out.write(buffer);
+
+                }
+
                 return;
 
             }
