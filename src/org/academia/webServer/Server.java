@@ -14,7 +14,6 @@ public class Server {
     byte[] notFileFound;
     DataOutputStream out;
     BufferedReader in;
-    //byte[] fileNotFound;
 
     public static void main(String[] args) {
 
@@ -25,22 +24,33 @@ public class Server {
             ServerSocket serverSocket = new ServerSocket(server.portNumber);
             System.out.println("Waiting for new client to establish connection...");
 
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Connection established to: " + "address = " + clientSocket.getLocalSocketAddress() + " localport = " + clientSocket.getPort());
-
-            server.out = new DataOutputStream(clientSocket.getOutputStream());
-            server.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 
-            server.request = server.in.readLine().split(" ");
-            server.directory = "www" + server.request[1];
-
-            server.fileCheck(server.directory);
 
 
-            server.in.close();
-            clientSocket.close();
-            serverSocket.close();
+            while(true) {
+
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Connection established to: " + "address = " + clientSocket.getLocalSocketAddress() + " localport = " + clientSocket.getPort());
+
+                server.out = new DataOutputStream(clientSocket.getOutputStream());
+                server.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+
+                server.request = server.in.readLine().split(" ");
+
+                server.directory = "www" + server.request[1];
+                server.fileCheck(server.directory);
+
+
+
+                if(false){
+                    server.in.close();
+                    clientSocket.close();
+                    serverSocket.close();
+                }
+
+            }
 
         } catch (IOException exception) {
 
@@ -53,7 +63,9 @@ public class Server {
     public void fileCheck (String path){
 
         try {
+
             System.out.println(path);
+
             if(path.equals("www/index.html") || path.equals("www/")){
 
                 dest = Files.readAllBytes(new File("www/index.html").toPath());
@@ -90,7 +102,6 @@ public class Server {
 
             }
 
-            System.out.println("Enter");
             notFileFound = Files.readAllBytes(new File("www/notFound.html").toPath());
             String notFoundError = new String(notFileFound);
 
@@ -99,8 +110,6 @@ public class Server {
                     "Content-Length: " + notFileFound.length + "\r\n\r\n");
             out.writeBytes(notFoundError);
             out.flush();
-
-
 
         } catch (IOException e) {
 
