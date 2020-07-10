@@ -25,20 +25,20 @@ public class Server {
             System.out.println("Waiting for new client to establish connection...");
 
 
-
-
-
             while(true) {
 
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Connection established to: " + "address = " + clientSocket.getLocalSocketAddress() + " localport = " + clientSocket.getPort());
+                Thread client = new Thread(new Client());
+                client.start();
+
+
 
                 server.out = new DataOutputStream(clientSocket.getOutputStream());
                 server.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 
                 server.request = server.in.readLine().split(" ");
-
                 server.directory = "www" + server.request[1];
                 server.fileCheck(server.directory);
 
